@@ -29,6 +29,13 @@
   - [Problem](#problem-4)
   - [Solution](#solution-1)
     - [Union types](#union-types)
+- [Packages](#packages)
+  - [Background](#background)
+  - [Problem](#problem-5)
+  - [Solutions](#solutions)
+    - [Constrain package types](#constrain-package-types)
+    - [Package Acquisition](#package-acquisition)
+    - [Primary and additional packages](#primary-and-additional-packages)
 - [Outputs](#outputs)
 
 # Inputs
@@ -452,6 +459,103 @@ radioButtons({
 ```
 
 This makes sense because when you pick a new option, it is the whole object (`scriptSource`) that gets replaced with a new value. We can also work out which label to currently show as selected based on which of the two values of `newValueWhenSelected` has the same *discriminator values* as the current value of the `scriptSource` object.
+
+# Packages
+
+## Background
+
+Packages in steps are a first-class feature that is deeply ingrained within deployments.
+
+Steps contain two types of package references: Primary and Additional. Both of these types are stored on the `Packages` property on a `DeploymentActionResource`, where a primary package reference is the single item in this collection with an empty name. Information about these package references are not stored in the `Properties` property.
+
+At deployment time, the packages used in these `Packages` properties are are analysed and one of three courses is chosen
+- They are acquired on the server
+- They are acquired on the target
+- They are not acquired at all
+
+How octopus server picks each of those options is complex, but the main highlights for the purpose of this document are:
+- If the package is a primary package, it is always acquired. The assumption is that if a package is the primary package for that step, then the step needs to do something with the physical package, so it must be acquired.
+- If the package is an additional package, the end user has the option to configure whether the package is acquired or not.
+
+All current package types can be "acquired" in some way, including container images. Container images are acquired by invoking `docker pull` on the target.
+
+Some steps have constraints on the kinds of packages that can referenced. For example, the docker run step can only reference container images.
+
+Within steps from step packages, the inputs object can contain package references. These package references can be anywhere in the inputs object.
+
+## Problem
+
+There are some problems with the existing infrastructure, particularly with step packages.
+
+- Any packages referenced by a step need to be stored in two places - the `Packages` property and within the `inputs` object.
+- The distinction between primary and additional packages doesn't make sense within the `inputs` object.
+- Not all steps have a primary package reference. For example, an ECS step or K8S step can contain a set of container images, and none of these are considered "primary".
+- The name of a package reference doesn't make sense in step packages - the path to the `inputs` property already uniquely defines the package reference.
+- The type that we map the `PackageReference` to at execution time needs to vary depending on whether the package was acquired or not. 
+  - Acquired physical packages should get mapped to a string representing the path to the extraction location.
+  - Non-acquired packages should get mapped to a type that contains the package id, its version, and information about the feed.
+  - Acquired container images should get mapped to the same thing as non-acquired packages: the package id, its version, and information about the feed.
+
+## Solutions
+
+### Constrain package types
+
+Step authors should be able to specify which kind of packages their inputs reference as follows:
+
+```tsx
+interface MyInputs {
+  dockerPackage: PackageReference<DockerPackage>;
+  nugetPackage: PackageReference<NuGetPackage>;
+  dockerOrNugetPackage: PackageReference<DockerPackage | NuGetPackage>;
+}
+```
+
+Where `DockerPackage` and `NuGetPackage` are examples of the types exposed through the `step-api`.
+
+The information about the package type for a package reference can be stored in the input schema. This can be used by the step UI in order to constrain which types of feeds can be used to select the package. It can also be used by the server to validate that the feed is of a suitable type.
+
+### Package Acquisition
+
+The requirement that `PackageReference`s need to map to different execution-time types based on whether they have been acquired or not means that we need to capture this information in the type system.
+
+We should have two types that represent packages that aren't acquired and packages that are acquired.
+
+```tsx
+interface MyInputs {
+  acquiredPackage: AcquiredPackageReference<NuGetPackage>;
+  notAcquiredPackage: NotAcquiredPackageReference<DockerPackage>;
+}
+```
+
+At execution time, these types can map to different things:
+
+```tsx
+type ExecutionInputs = ExecutionInputs<MyInputs>; // this is equivalent to...
+
+interface ExecutionInputs {
+  acquiredPackage: { extractedToPath: string };
+  notAcquiredPackage: {
+    packageId: string;
+    packageVersion: string;
+    feed: DockerFeed;
+  }
+}
+
+interface DockerFeed {
+  name: string;
+  dockerUrl: string;
+  registryPath: string;
+  credentials: string;
+}
+```
+
+### Primary and additional packages
+
+In the long term, we should consider removing the Packages property, and instead use information about the inputs and the input schema to decide whether packages should be acquired.
+
+In the meantime, we should continue to use the Packages property and duplicate information between the `inputs` property and the `Packages` property by making sure the `Packages` property gets updated appropriately whenever the `inputs` property changes. That is, the `inputs` property is the source of truth and the `Packages` property is treated like a derived property.
+
+Any packages referenced by a step created from a step package should not use any "Primary" package references, and all package references will be "additional" references, with their properties (like whether they are acquired) to be derived from the input schema.
 
 # Outputs
 
