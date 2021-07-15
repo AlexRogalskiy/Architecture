@@ -32,9 +32,9 @@
 - [Packages](#packages)
   - [Background](#background)
   - [Problem](#problem-5)
-  - [Solutions](#solutions)
-    - [Constrain package types](#constrain-package-types)
-    - [Package Acquisition](#package-acquisition)
+  - [Solution](#solution-2)
+    - [Assumptions](#assumptions)
+    - [`ContainerImageReference` and `PackageReference`](#containerimagereference-and-packagereference)
     - [Primary and additional packages](#primary-and-additional-packages)
 - [Outputs](#outputs)
 
@@ -496,45 +496,39 @@ There are some problems with the existing infrastructure, particularly with step
   - Non-acquired packages should get mapped to a type that contains the package id, its version, and information about the feed.
   - Acquired container images should get mapped to the same thing as non-acquired packages: the package id, its version, and information about the feed.
 
-## Solutions
+## Solution
 
-### Constrain package types
+### Assumptions
 
-Step authors should be able to specify which kind of packages their inputs reference as follows:
+- Any new steps that we write do not need to acquire container images (i.e. `docker pull`) on the workers, because we are always going to be forwarding this information to a cloud service.
+- For acquired physical packages, steps don't need to care about the source of that package (i.e. which feed type it originated from). Steps are agnostic to this detail and any step can acquire a physical package from any feed type.
 
-```tsx
-interface MyInputs {
-  dockerPackage: PackageReference<DockerPackage>;
-  nugetPackage: PackageReference<NuGetPackage>;
-  dockerOrNugetPackage: PackageReference<DockerPackage | NuGetPackage>;
-}
-```
+### `ContainerImageReference` and `PackageReference`
 
-Where `DockerPackage` and `NuGetPackage` are examples of the types exposed through the `step-api`.
-
-The information about the package type for a package reference can be stored in the input schema. This can be used by the step UI in order to constrain which types of feeds can be used to select the package. It can also be used by the server to validate that the feed is of a suitable type.
-
-### Package Acquisition
-
-The requirement that `PackageReference`s need to map to different execution-time types based on whether they have been acquired or not means that we need to capture this information in the type system.
-
-We should have two types that represent packages that aren't acquired and packages that are acquired.
+Our "package" selection will be represented by two distinct types.
 
 ```tsx
 interface MyInputs {
-  acquiredPackage: AcquiredPackageReference<NuGetPackage>;
-  notAcquiredPackage: NotAcquiredPackageReference<DockerPackage>;
+  nugetPackage: PackageReference;
+  dockerPackage: ContainerImageReference;
 }
 ```
 
-At execution time, these types can map to different things:
+- The `PackageReference` type represents a selection from a feed that Octopus Server can use to download a package file. This package file is acquired on the worker.
+- The `ContainerImageReference` type represents the selection of a container image. These container images are never acquired (i.e. `docker pull`) on the workers.
+
+Steps don't need to know about which feed type was used to select or acquire these packages. This means any step that uses a `PackageRefernce` can obtain that package from any type of package feed (e.g. Built-in, NuGet, Maven, Helm, Github), while any step that uses a `ContainerImageReference` can use any container image feed type (e.g. docker, AWS ECR)
+
+At execution time, these types will map to different things. 
+ - The `PackageReference` type will map to a path to the extracted package location. 
+ - The `ContainerImageReference` will be mapped to a type that contains the container image id and version, as well as information about the feed (such as the feed url).
 
 ```tsx
 type ExecutionInputs = ExecutionInputs<MyInputs>; // this is equivalent to...
 
 interface ExecutionInputs {
-  acquiredPackage: { extractedToPath: string };
-  notAcquiredPackage: {
+  nugetPackage: { extractedToPath: string };
+  dockerPackage: {
     packageId: string;
     packageVersion: string;
     feed: DockerFeed;
@@ -545,7 +539,6 @@ interface DockerFeed {
   name: string;
   dockerUrl: string;
   registryPath: string;
-  credentials: string;
 }
 ```
 
