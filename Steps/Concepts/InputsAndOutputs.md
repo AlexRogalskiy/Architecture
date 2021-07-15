@@ -509,8 +509,8 @@ Our "package" selection will be represented by two distinct types.
 
 ```tsx
 interface MyInputs {
-  nugetPackage: PackageReference;
-  dockerPackage: ContainerImageReference;
+  physicalPackage: PackageReference;
+  dockerImage: ContainerImageReference;
 }
 ```
 
@@ -527,8 +527,8 @@ At execution time, these types will map to different things.
 type ExecutionInputs = ExecutionInputs<MyInputs>; // this is equivalent to...
 
 interface ExecutionInputs {
-  nugetPackage: { extractedToPath: string };
-  dockerPackage: {
+  physicalPackage: { extractedToPath: string };
+  dockerImage: {
     packageId: string;
     packageVersion: string;
     feed: DockerFeed;
