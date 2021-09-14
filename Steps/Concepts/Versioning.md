@@ -54,6 +54,8 @@ We _may_ enforce this consistency within the `Step Package CLI` - we could refus
 
 [Further Discussion](https://docs.google.com/document/d/1RB4PzPpbtMJBqEHxQCPD2qGMNUCGAJ8KoXEOqXC9yAA/edit#heading=h.1sahu1il44s6)
 
+[Migration Concepts](./Migration.md)
+
 # Compatibility
 
 There are many compatibility surfaces within the Step Package ecosystem. Making sure these surfaces have explicit versioning in-place allows us to make changes of them over time, and make deliberate decisions about their compatibility as they evolve.

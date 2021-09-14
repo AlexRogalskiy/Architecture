@@ -178,6 +178,7 @@ The next best thing we can do is remove knowledge of bound variables from the pl
 
 - Serializing to and from an exported representation of the step (e.g. YAML for K8s steps)
 - Writing expressive human-readable section summaries that may need to take the context of variable binding into account
+- Writing migration functions with step packages
 
 ## Resources
 
