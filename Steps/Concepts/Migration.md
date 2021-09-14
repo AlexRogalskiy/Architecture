@@ -14,6 +14,8 @@
   - [Recommendations](#recommendations)
     - [Tooling](#tooling)
   - [Common Code](#common-code)
+- [Alternative Approaches](#alternative-approaches)
+  - [Only latest major version of step in repo](#only-latest-major-version-of-step-in-repo)
 
 # Overview
 
@@ -140,3 +142,26 @@ It is recommended that the following tooling be used to assist with dependency m
 ## Common Code
 
 When introducing a new version of a step, there still may be common code that is compatible across multiple versions of that step, this code could be moved to common packages as the step author sees fit. This could theoretically also be extended to input types/migrations if desired.
+
+# Alternative Approaches
+
+There are some alternative approaches to migration and repository design that have been considered, these are captured here for context.
+
+## Only latest major version of step in repo
+
+Instead of enforcing that all major versions of a step exist in the repo and published package, this approach would only see the latest major version of any given step/target being stored in the repository and published package. Git branches would be used to track previous versions that need to be supported e.g. `release/v1`.
+
+A set of migration functions would need to be maintained to update previous major versions to the current version, in a sequential manner similar to DbUp migrations e.g. v1 -> v2, v2 -> v3. Tooling would need to enforce this to ensure that steps can be migrated safely.
+
+Patching fixes to a previous release would involve committing to release branch then merging forward as required.
+
+Benefits:
+
+- Don't necessarily need monorepo tooling such as pnpm or changesets. Changesets would still be useful for versioning and release note management though.
+- Less code to have in the repo at any given time.
+- Published step packages would be smaller as they would only contain the latest major version, not all major versions. This would only really be at acquisition time, at execution time only the specific version required is sent to the worker to be executed.
+
+Downsides:
+
+- Independently versioning multiple steps/targets becomes more complex. For example if there is a v2 of a step but other steps are still on v1 how does a branching strategy work?
+- Depending on which published versions of a step have been installed, Server needs to be more aware that certain versions may not be available for operations like migration. This may not be a big deal, but adds additional complexity to the handling of operations in Server.
