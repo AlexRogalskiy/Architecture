@@ -14,13 +14,13 @@ Node will be our default choice for developing Step Packages.
 
 Dotnet will only be used for migrating existing Sashimi-based steps into Step Packages.
 
-![Step Packages](https://github.com/OctopusDeploy/Architecture/blob/master/Steps/assets/building_blocks.png)
+![Step Packages](https://github.com/OctopusDeploy/Architecture/blob/main/Steps/assets/building_blocks.png)
 
 For further implementation-level detail on Step Packages, see the [Step Package Documentation](https://github.com/OctopusDeploy/step-api).
 
 ## Conventions
 
-Step Packages use a convention-based structure. These conventions are in place for _simplicity_ - they make locating components within Step Packages simple for the [Step Package CLI](https://github.com/OctopusDeploy/Architecture/blob/master/Steps/Components/StepPackageCLI.md), and for Octopus Server.
+Step Packages use a convention-based structure. These conventions are in place for _simplicity_ - they make locating components within Step Packages simple for the [Step Package CLI](https://github.com/OctopusDeploy/Architecture/blob/main/Steps/Components/StepPackageCLI.md), and for Octopus Server.
 
 ## Metadata
 
@@ -32,7 +32,7 @@ At the top level, each Step within a Step Package has metadata, captured within 
 
 The [Step API](https://github.com/OctopusDeploy/step-api) is a npm package that contains a set of types that Step Packages must implement in order to present a conforming step.
 
-These types form the API surface between Steps and Octopus Server. If your Step implements these types, it will be guaranteed to work with Octopus Server, taking into account [versioning](https://github.com/OctopusDeploy/Architecture/blob/master/Steps/Concepts/Versioning.md).
+These types form the API surface between Steps and Octopus Server. If your Step implements these types, it will be guaranteed to work with Octopus Server, taking into account [versioning](https://github.com/OctopusDeploy/Architecture/blob/main/Steps/Concepts/Versioning.md).
 
 # Step Packages vs Community Step Templates
 
