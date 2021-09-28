@@ -105,3 +105,7 @@ The API itself uses the slug instead of the name. The slug is generated during [
 
 ### Front-End
 * A large portion of the name and Id conversions actually take place outside the Octopus system and is the resonsibility of the consumer. For example our front-end needs to know that when interacting with a deployment process in VCS that it should use names and when interacting with the deployment process in DB it should use ids.
+
+## Related Documents
+[Names And Ids initial Considerations](https://github.com/OctopusDeploy/Architecture/blob/main/OctopusServer/ConfigAsCode/NamesOrIds.md)
+[Identities in VCS](https://docs.google.com/document/d/1dhfM6YFDJ2X_Oqg9ozMb4M9kp0CO2X2hYMESTBONJPk/edit)
