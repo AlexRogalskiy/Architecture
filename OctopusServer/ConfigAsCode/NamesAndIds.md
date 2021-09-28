@@ -5,7 +5,7 @@
 ## Version Controlled Entities
 
 ### Deployment Settings
-📛 `DeploymentSettings.VersioningStrategy.DonorPackage.Step`. Not entirely unexpected since in this case the target itself is in VCS as well and so under some interpretations might not have an id.
+* `DeploymentSettings.VersioningStrategy.DonorPackage.Step`. Not entirely unexpected since in this case the target itself is in VCS as well and so under some interpretations might not have an id.
 
 ```hcl
 versioning_strategy {
@@ -19,7 +19,7 @@ versioning_strategy {
 
 
 ### Deployment Process
-📛There a a [bunch of special variables](https://github.com/OctopusDeploy/OctopusDeploy/blob/master/source/Octopus.Core/Features/DeploymentProcesses/SpecialVariableSchema.cs#L13) that map names back to Ids. This is used in the `NameIdResolver.cs` when [mapping between tinytypes](https://github.com/OctopusDeploy/OctopusDeploy/blob/master/source/Octopus.Core/Features/DeploymentProcesses/NameIdResolver.cs#L157). In this case the properties have an _implied_ tiny type type via the `SpecialVariableSchema` lookup.
+* There a a [bunch of special variables](https://github.com/OctopusDeploy/OctopusDeploy/blob/master/source/Octopus.Core/Features/DeploymentProcesses/SpecialVariableSchema.cs#L13) that map names back to Ids. This is used in the `NameIdResolver.cs` when [mapping between tinytypes](https://github.com/OctopusDeploy/OctopusDeploy/blob/master/source/Octopus.Core/Features/DeploymentProcesses/NameIdResolver.cs#L157). In this case the properties have an _implied_ tiny type type via the `SpecialVariableSchema` lookup.
 ```c#
 new SpecialVariableSchema(SpecialVariables.Action.Package.FeedId, "Feed", typeof(FeedIdOrName), SpecialVariableType.String),
 new SpecialVariableSchema(SpecialVariables.Action.Package.NuGetFeedId, "Feed", typeof(FeedIdOrName), SpecialVariableType.String),
@@ -46,7 +46,7 @@ step "Manual Intervention Required" {
 ```
 
 
-📛 Channel Names
+* Channel Names
 ```hcl
 
 step "Hello world (using PowerShell)" {
@@ -54,7 +54,7 @@ step "Hello world (using PowerShell)" {
         channels = ["Default", "Second Channal!!!"]
 ```
 
-📛 Environment Names
+* Environment Names
 ```hcl
 
 step "Hello world (using PowerShell)" {
@@ -63,7 +63,7 @@ step "Hello world (using PowerShell)" {
 ```
         
 
-📛 Packages - Packege feeds are referred to via the ID.
+* Packages - Packege feeds are referred to via the ID.
 ```hcl
 packages "putty" {
     acquisition_location = "Server"
