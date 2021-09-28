@@ -2,7 +2,6 @@
 ...Or what entities do we map between names and Ids for VCS??
 
 
-
 ## Version Controlled Entities
 
 ### Deployment Settings
@@ -54,6 +53,44 @@ step "Hello world (using PowerShell)" {
     action {
         channels = ["Default", "Second Channal!!!"]
 ```
+
+📛 Environment Names
+```hcl
+
+step "Hello world (using PowerShell)" {
+    action {
+        environments = ["Dev", "Staging"]
+```
+        
+
+📛 Packages - Packege feeds are referred to via the ID.
+```hcl
+packages "putty" {
+    acquisition_location = "Server"
+    feed = "Octopus Server (built-in)"
+    package_id = "putty"
+```
+
+If the feed type is a "deploy a project" step then the package itself is also the project name. This process takes place in the [OCL serialization layer](https://github.com/OctopusDeploy/OctopusDeploy/blob/e641389b25df8c8c6c684149426eb82167075b26/source/Octopus.Core/Serialization/Ocl/OclConverters/DeploymentActionOclConverter.cs#L161).
+```hcl
+step "Deploy a Release" {
+
+    action {
+        action_type = "Octopus.DeployRelease"
+        properties = {
+            Octopus.Action.DeployRelease.DeploymentCondition = "Always"
+            Octopus.Action.DeployRelease.ProjectId = "BaseProject"
+        }
+    }
+```
+
+### Database Entities
+Variables
+
+Releases
+
+Triggers
+
 
 ## Conversion Strategies and Locations
 
