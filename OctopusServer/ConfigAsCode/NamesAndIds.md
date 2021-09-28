@@ -1,11 +1,11 @@
 # Names And Ids
-...Or what entities do we map between names and Ids for VCS??
+...Or what entities do we map between names and Ids for VCS?? (or in some cases slugs)
 
 
 ## Version Controlled Entities
 
 ### Deployment Settings
-📛 `DeploymentSettings.VersioningStrategy.DonorPackage.Step`
+📛 `DeploymentSettings.VersioningStrategy.DonorPackage.Step`. Not entirely unexpected since in this case the target itself is in VCS as well and so under some interpretations might not have an id.
 
 ```hcl
 versioning_strategy {
@@ -86,11 +86,12 @@ step "Deploy a Release" {
 
 ### Database Entities
 Variables
+🐌 We store and expose the Step scoped variable as the slug
+![image](https://user-images.githubusercontent.com/1830666/135007500-d33827af-eb5b-4d7b-ac7a-a293d4ec54c0.png)
 
-Releases
+![image](https://user-images.githubusercontent.com/1830666/135007590-80db8656-ef05-4288-b45e-48db9651bcbe.png)
 
-Triggers
-
+The API itself uses the slug instead of the name. The slug is generated during [ocl deserialization](https://github.com/OctopusDeploy/OctopusDeploy/blob/e641389b25df8c8c6c684149426eb82167075b26/source/Octopus.Core/Serialization/Ocl/OclConverters/DeploymentActionOclConverter.cs#L171) and is based on the name
 
 ## Conversion Strategies and Locations
 
@@ -98,3 +99,5 @@ Triggers
 * `SnapshotSnapshotter` - When snapshotting a `DeploymentProcess`, `VariableSet` (or in future `RunbookProcess`) Them the [Names are mapped to Ids](https://github.com/OctopusDeploy/OctopusDeploy/blob/c6b4737add2dc8e740e8f658122d6e3263744f82/source/Octopus.Core/Features/SnapshotSnapshotter.cs#L141). This is passed in from various controllers around creating or modifying snapshots.
 * `WarningGuidanceNameIdResolver` - (via `ProcessWarningFinder` and `RunbookProcessWarningFinder`). This is used via the `ValidateDeploymentProcessController` endpoint that "validates" a deployment process [when it has been loaded](https://github.com/OctopusDeploy/OctopusDeploy/blob/27651b587bcb62455fe4f47e46368a77af0edd26/newportal/app/areas/projects/components/Process/ProcessStepsLayout.tsx#L259).
 * `ProjectToVersionControlConverter` - When [converting a deployment process](https://github.com/OctopusDeploy/OctopusDeploy/blob/a033f6b5703f1aed50fa69131fa7eed2cef50747/source/Octopus.Server/Web/Api/Actions/Projects/ProjectToVersionControlConverter.cs#L170) to vcs we convert the Ids to Names.
+
+### OCL Serialization
