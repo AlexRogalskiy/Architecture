@@ -102,3 +102,6 @@ The API itself uses the slug instead of the name. The slug is generated during [
 
 ### OCL Serialization
 * If the serialization process comes across the `TagCanonicalIdOrName` TinyType, then the [TinyTypeReferenceCollectionOclConverter](https://github.com/OctopusDeploy/OctopusDeploy/blob/ef55c3172b84a4d46a2dc6c2a5959e295275afed/source/Octopus.Core/Serialization/Ocl/OclConverters/TinyTypeReferenceCollectionOclConverter.cs#L21) Will ensure it is persisted to OCL by name. This is because for _other_ properties, e.g channels, environments we expect the front end user to correctly pass the name instead of ID. Tags on the other hand have _always_ been name via the front-end and so specific allowances must be made for them.
+
+### Front-End
+* A large portion of the name and Id conversions actually take place outside the Octopus system and is the resonsibility of the consumer. For example our front-end needs to know that when interacting with a deployment process in VCS that it should use names and when interacting with the deployment process in DB it should use ids.
