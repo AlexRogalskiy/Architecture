@@ -2,13 +2,13 @@
 
 ## Overview
 
-**Step Packages** are Octopus Server's extensibility model for creating new Steps - the things that do the work of deployment!
+**Step Packages** are Octopus Server's extensibility model for creating new Steps and Deployment Targets - the things that come together to do the work of deployment!
 
-A Step Package is a `zip` file. It contains all of the things Octopus Server needs to use the Step in a Deployment Process.
+A Step Package is a `zip` file. It contains all of the things Octopus Server needs to use the Step in a Deployment Process, or Target in a Deployment.
 
-Step Packages are named in the format `Octopus.MyStepPackage.1.0.0.zip`, and are located under `%OctopusServerRoot%/bin/steps`
+Step Packages are named in the format `my-step-package.1.0.0.zip`, and are located under `%OctopusServerRoot%/bin/steps`
 
-Step packages have been designed to allow using different technologies to develop the Step Executor they contain. Currently we support writing Step Packages in node, and will soon support writing them in dotnet.
+Step packages have been designed to allow using different technologies to develop the Executor they contain. Currently we support writing Step Packages in node, and will soon support writing them in dotnet.
 
 Node will be our default choice for developing Step Packages.
 
@@ -24,11 +24,9 @@ Step Packages use a convention-based structure. These conventions are in place f
 
 ## Metadata
 
-At the top level, each Step within a Step Package has metadata, captured within `metadata.json`. This metadata provides a language-agnostic way for Steps to supply Octopus Server with information it needs to use the Step - examples include it's name, and whether it can run on a deployment target.
+At the top level each Step Package has metadata, captured within `metadata.json`. This metadata provides a language-agnostic way for Steps to supply Octopus Server with information it needs to use the Step - examples include it's name, and whether it can run on a deployment target.
 
 ## Step API
-
-> The Step API is a WIP, and is likely to change as we find an optimal shape for its repository and packaging
 
 The [Step API](https://github.com/OctopusDeploy/step-api) is a npm package that contains a set of types that Step Packages must implement in order to present a conforming step.
 

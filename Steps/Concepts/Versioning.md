@@ -20,37 +20,34 @@ _Compatibility_ refers to the compatibility of various Step Package components w
 ## Tl;Dr:
 
 - We care about **versions** of Step Packages, and the **compatibility** of their components with Server components.
-- We would like to pursue a monorepo for the API (agree strongly with this) - we are already part way there since we have merged them into a single repo.
-- Compatibility surfaces include: manifest + conventions, UI API, input processing (both server and UI), validation (ditto), execution API.
-- We would like to embed version information for all compatibility surfaces into metadata.json (probably a job for the Step Package CLI)
+- Compatibility surfaces include: manifest + conventions, UI API, input processing (both server and UI), validation, execution, and migrations.
+- We would like to embed version information for all compatibility surfaces into metadata.json
 - This information can be made available to the "other side" of the compatibility surfaces in a variety of ways.
-- We are still debating how to best support versions of Step Packages changing over time
-- We will use shims to support the versions of compatibility surfaces changing over time
-- Server will be able to determine what steps it might support
+- Step Packages will implement [migrations](./Migration.md) to support their versions changing over time.
+- We will use shims to support the versions of compatibility surfaces changing over time.
+- Server will be able to determine what steps it might support.
 
 ## Examples
 
-Different versions of Step Packages. For example, we ship `step-package-azurestorage.1.0.0`. We then make a change to the set of inputs such that it is no longer runtime compatible with existing steps that have been configured in deployment and runbook process. We then ship a new version, say `step-package-azurestorage.2.0.0`. We need to migrate/upgrade the set of inputs stored against those steps in our deployment and runbook processes, so that the they can be configured and executed using `step-package-azurestorage.2.0.0`.
+Different versions of Step Packages. For example, we ship `step-package-azurestorage.1.0.0`. We then make a change to the set of inputs such that it is no longer runtime compatible with existing steps that have been configured in deployment and runbook process, and ship a new version, `step-package-azurestorage.2.0.0`. We need to migrate the set of inputs stored against those steps in our deployment and runbook processes, so that the they can be configured and executed using `step-package-azurestorage.2.0.0`.
 
-We have multiple versions of the same "step" that we want to expose to users, so that users can pick which one they want to use. For example, we might have `terraform-1.13.0` which only works with the `0.13.x` versions of terraform. If a user wants to target terraform version `0.14.x`, they would need to upgrade their step to `terraform-1.14.0`. We could also implement this through configuration alone, so that there is a single step that supports multiple versions of terraform with a version selector at the top.
+We have multiple versions of the same Step Package that we want to expose to users, so that users can pick which one they want to use. For example, we might have `terraform-1.13.0` which only works with the `0.13.x` versions of terraform. If a user wants to target terraform version `0.14.x`, they would need to upgrade their step to `terraform-1.14.0`. We could also implement this through configuration alone, so that there is a single step that supports multiple versions of terraform with a version selector at the top.
 
-We have a step like `step-package-azurestorage.1.0.0` which is compiled against `step-ui-api.1.0.0`. We then make a breaking change to the `step-ui-api` (and release a new version like `step-ui-api.2.0.0`) and update our framework in portal as well, so that `step-package-azurestorage.1.0.0` is no longer directly compatible with portal. We can either upgrade the `step-ui-api` dependency and release a new version of our step (say `step-package-azurestorage.2.0.0`) to make it compatible and deprecate the old step somehow, or we could have a compatibility shim in portal so that portal can support steps compiled against both `step-ui-api.1.0.0` and `step-ui-api.2.0.0`.
+We have a step like `step-package-azurestorage.1.0.0` which is compiled against `step-ui-api.1.0.0`. We then make a breaking change to the `step-ui-api` and release a new version `step-ui-api.2.0.0` and update our framework in portal as well, so that `step-package-azurestorage.1.0.0` is no longer directly compatible with portal. We can either upgrade the `step-ui-api` dependency and release a new version of our step (say `step-package-azurestorage.2.0.0`) to make it compatible and deprecate the old step somehow, or we could have a compatibility shim in portal so that portal can support steps compiled against both `step-ui-api.1.0.0` and `step-ui-api.2.0.0`.
 
 # Versioning
 
-A Step Package is a versioned component. It's version is denoted in its file name - `StepPackage.2.0.0.zip` would denote version `2.0.0` of the Step Package. The version will follow [SemVer 2.0.0](https://semver.org/)-like versioning semantics.
+A Step Package is a versioned component. It's version is recorded within the `Version` field of its `metadata.json` file. The version will follow [SemVer 2.0.0](https://semver.org/)-like versioning semantics.
 
-Over time, we may make changes to the contents of Step Packages, and increase their version number accordingly.
+Over time, we may make changes to a Step Package, and increase the version number accordingly.
 
-Why _semver-like_? Patch and minor increment semantics will be exactly the same, but major increments are slightly different. For Step Packages, a major version increment will be required when any of the Steps it contains change in a way that requires user intervention for it to function correctly - this may be adding new information, or changing existing information.
+Why _semver-like_? Patch and minor increment semantics will be exactly the same, but major increments are slightly different. For Step Packages, a major version increment will be required it changes in a way that requires user intervention for it to function correctly - this may be adding new information, or changing existing information.
 
 **Minor Version Increments:** Within Server, we will automatically retrieve the _latest version_ of the same major version a step was created with when working within any of the steps components - UI, validator, executor, etc. This means for all backwards-compatible feature additions and bug fixes, users will recieve these benefits immediately in their existing processes, without having to update anything.
 
-**Major Version Increments:** For major version increments, a user will need to opt-in to them. There will be a version selector presented on the step UI if a newer version is available. If it is, and the user selects the next version, the step will be upgraded to the selected version. This will not be a reversable process.
+**Major Version Increments:** For major version increments, a user will need to opt-in to them. There will be a visual indication presented on the step UI if a newer version is available. If it is, and the user opts into the next version available, the step will be upgraded to the newer version
 
-For each major version upgrade, an _upgrade function_ will need to be provided by the Step Package in question to migrate the persisted step inputs from vCurrent to vSelected. This may require running a number of upgrade functions sequentially to upgrade the step to the required version.
-
-We _may_ enforce this consistency within the `Step Package CLI` - we could refuse to build a step of version `v(n)` if the Step Package did not present `n-1` upgrade functions
+For each major version upgrade, a [migration](./Migration.md) will need to be provided by the Step Package in question to migrate the persisted step inputs from `vCurrent` to `vSelected`. This may require running a number of migration functions sequentially to upgrade the step to the required version.
 
 [Further Discussion](https://docs.google.com/document/d/1RB4PzPpbtMJBqEHxQCPD2qGMNUCGAJ8KoXEOqXC9yAA/edit#heading=h.1sahu1il44s6)
 
@@ -92,6 +89,11 @@ We will always assume Calamari uses `vLatest` of the Step Bootstrapper. The Step
 
 This version will be embedded within the Step Package manifest by the Step Package CLI at build time.
 
+**Step Package Migration API Version**
+When we want to migrate a set of inputs for a step from vCurrent to vSelected, Server needs to be able to run the migration functions defined by the target vSelected step to apply the appropriate changes to the vCurrent inputs. If the Step Package Migration API surface changes, Server will need to interact with Step Packages that use older Migration API versions through compatibility shims.
+
+This version will be embedded within the Step Package manifest by the Step Package CLI at build time.
+
 **Overall Server support for a given Step API Version**
 We need some mechanism so that Server can make decisions about what Step Packages to expose to users, based on what versions it knows it can support.
 
@@ -105,4 +107,4 @@ The meta-package will include all of the Step Package APIs required to build a S
 
 We do not need all of these APIs in Server, so we will produce separate API packages that server can use, to minimise the need to change Server if and when they change: `npm i --save-dev @octopus/step-ui-api`
 
-To make it simpler to build both the individual packages and the meta-package, we will use a _monorepo_ for these API codebases **TODO**
+To make it simpler to build both the individual packages and the meta-package, we will use a _monorepo_ for these API codebases (see the [step-api repository](https://github.com/octopusdeploy/step-api)).
