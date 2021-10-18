@@ -6,10 +6,11 @@
 - [Versioning](#versioning)
 - [Compatibility](#compatibility)
 - [Developer Experience](#developer-experience)
+- [Deployment Target Versioning Limitations](#deployment-target-versioning-limitations)
 
 # Overview
 
-> This section is detailling our intentions for versioning and compatibility for Step Packages and Octopus Server, but may change as we implement them.
+> This section is detailing our intentions for versioning and compatibility for Step Packages and Octopus Server, but may change as we implement them.
 
 Versioning and Compatibility are orthogonal, but related concerns within the Step Package ecosystem.
 
@@ -23,9 +24,9 @@ _Compatibility_ refers to the compatibility of various Step Package components w
 - Compatibility surfaces include: manifest + conventions, UI API, input processing (both server and UI), validation, execution, and migrations.
 - We would like to embed version information for all compatibility surfaces into metadata.json
 - This information can be made available to the "other side" of the compatibility surfaces in a variety of ways.
-- Step Packages will implement [migrations](./Migration.md) to support their versions changing over time.
+- Step packages will implement [migrations](./Migration.md) to support their versions changing over time.
 - We will use shims to support the versions of compatibility surfaces changing over time.
-- Server will be able to determine what steps it might support.
+- Server will be able to determine what Step Packages it might support.
 
 ## Examples
 
@@ -108,3 +109,15 @@ The meta-package will include all of the Step Package APIs required to build a S
 We do not need all of these APIs in Server, so we will produce separate API packages that server can use, to minimise the need to change Server if and when they change: `npm i --save-dev @octopus/step-ui-api`
 
 To make it simpler to build both the individual packages and the meta-package, we will use a _monorepo_ for these API codebases (see the [step-api repository](https://github.com/octopusdeploy/step-api)).
+
+# Deployment Target Versioning Limitations
+
+Deployment targets will not be allowed to change beyond a `1.x` version. This means they cannot, after being shipped, undergo a major version update. We can however add new optional fields, and ship bug fixes for them (minor and patch updates respectively).
+
+The reasons for this decision are:
+
+- There is a _hard problem_ to solve in step-to-target compatibility. If we upgrade a step to a new version in a deployment process, and it requires a new version of its associated deployment target - how would we handle that migration? We cannot deterministically evaluate which targets might need upgrading. We do not want to burden users with this decision either.
+- Deployment targets should remain _very stable_ after their initial definition. The cloud APIs they model tend to be extremely long-lived, with cloud providers going to great lengths to satisfy backwards compatibility requirements. They should not need to change based on external changes.
+- The future for deployment targets is likely to be _Reflected Targets_ - targets that are discovered from cloud environments, not registered with server. For these cases, the compatibility surface between steps and targets is shifted to a contract that would sit between the step and its target cloud environment, not between the step and its Octopus deployment target.
+
+For these reasons this limitation is considered reasonable, and future deployment target development in Reflected Targets will attempt to tackle the problem of step <> target compatibility. 

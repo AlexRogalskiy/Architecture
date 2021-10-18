@@ -8,7 +8,7 @@ A Step Package is a `zip` file. It contains all of the things Octopus Server nee
 
 Step Packages are named in the format `my-step-package.1.0.0.zip`, and are located under `%OctopusServerRoot%/bin/steps`
 
-Step packages have been designed to allow using different technologies to develop the Executor they contain. Currently we support writing Step Packages in node, and will soon support writing them in dotnet.
+Step packages have been designed to allow using different technologies to develop the Executor they contain. We support writing Step Packages in node, and will soon support writing them in dotnet.
 
 Node will be our default choice for developing Step Packages.
 
@@ -24,7 +24,7 @@ Step Packages use a convention-based structure. These conventions are in place f
 
 ## Metadata
 
-At the top level each Step Package has metadata, captured within `metadata.json`. This metadata provides a language-agnostic way for Steps to supply Octopus Server with information it needs to use the Step - examples include it's name, and whether it can run on a deployment target.
+At the top level each Step Package has metadata, captured within `metadata.json`. This metadata provides a language-agnostic way for Steps to supply Octopus Server with information it needs to use the Step - examples include its name, and whether it can run on a deployment target.
 
 ## Step API
 

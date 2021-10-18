@@ -72,5 +72,7 @@ Composite tasks (tasks represented as a set of finer-grained functions or tasks 
 # Concepts
 
 - [Inputs and Outputs](https://github.com/OctopusDeploy/Architecture/blob/master/Steps/Concepts/InputsAndOutputs.md)
+- [Inputs and Optional Values](https://github.com/OctopusDeploy/Architecture/blob/master/Steps/Concepts/InputsOptionalValues.md)
 - [Execution](https://github.com/OctopusDeploy/Architecture/blob/master/Steps/Concepts/Execution.md)
 - [Versioning](https://github.com/OctopusDeploy/Architecture/blob/master/Steps/Concepts/Versioning.md)
+- [Migration](https://github.com/OctopusDeploy/Architecture/blob/master/Steps/Concepts/Migration.md)

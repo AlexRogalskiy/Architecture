@@ -1,8 +1,6 @@
-# Step UI - Optional Values
+# Index
 
-When defining our inputs, we need a way of expressing whether an input is optional or required.
-
-- [Background](#Background)
+- [Inputs and Optional Values](#inputs-and-optional-values)
 - [Scenarios](#Scenarios)
   - [Required values](#required-values)
   - [Optional values](#optional-values)
@@ -10,7 +8,9 @@ When defining our inputs, we need a way of expressing whether an input is option
   - [Preferred Solution](#preferred-solution)
   - [Rejected Solutions](#rejected-solutions)
 
-# Background
+# Inputs and Optional Values
+
+When defining our inputs, we need a way of expressing whether an input is optional or required.
 
 ## Schema Validation
 
@@ -103,6 +103,8 @@ A validation rule can be implemented to ensure that this value is required and n
 However, when configuring the UI, the value can still be undefined. To see why this is a valid scenario, consider the following use cases:
 
 1. A step has a set of radio buttons, but none of these make sense to be selected by default. If the user tries to save the step, they will receive a validation error because they have not yet picked a value for this radio button group. The initial value of the underlying input field should reflect that "nothing is selected".
+
+
 2. A deployment target has a reference to an account. There is no value that makes sense to be selected by default for this account, so the Select control is initially empty. If the user tries to save the deployment target without selecting an account, they would receive a validation error. The initial value of the underlying input field should reflect that "nothing is selected".
 
 # Solutions
@@ -146,15 +148,17 @@ Also consider the case where an account needs to be selected from a dropdown, an
 
 ```ts
 type MyInputs = {
+    name: string;
     account: Account<AzureServicePrincipal | EmptyInitialValue>;
 }
 ```
 
-When constructing the initial inputs for this step, the empty initial value will be provided so that the step author can initialise any values to this empty value:
+When constructing the initial inputs for this step, any Server-owned types, like an Account reference, will have appropriate default values supplied by Server, meaning the step author does not need to set any of these properties within `createInitialInputs`:
 
 ```ts
-createInitialInputs: ({ emptyInitialValue }) => ({
-    account: emptyInitialValue;
+createInitialInputs: () => ({
+    name: "my new thing",
+    /* Do not need to supply a value for account here */
 })
 ```
 
@@ -178,6 +182,8 @@ The `EmptyInitialValue` will also be treated differently in the input schema, su
 
 ### Variant: `UIOnly`
 
+_NOTE: This is future speculation only, it is not implemented._
+
 If we discover that there are any special values for other cases other than the "empty initial value", we might generalise this pattern further. 
 
 We could instead have a mapped type like `UIOnlyValue` that can be used to wrap any types, allowing them to be used in the UI, but stripped out in other bounded contexts and their mapped types.
@@ -198,7 +204,7 @@ This might make setting up initial values feel more natural:
 
 ```ts
 createInitialInputs: () => ({
-    foo: "empty initial value";
+    foo: "empty initial value"
 })
 ```
 

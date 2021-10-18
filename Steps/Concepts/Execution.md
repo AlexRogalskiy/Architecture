@@ -8,9 +8,9 @@
 
 # Composition and Coordination
 
-In Octopus, a deployment process consists of a set of steps. The code that makes up steps expresses both the execution-time functionality and the UI.
+In Octopus, a deployment process consists of a set of steps. The code that makes up steps expresses both the execution-time functionality and the UI for the step.
 
-This functionality consist of:
+The execution-time functionality consist of:
 
 - Implicit functions that may be triggered, like package acquisition
 - Shared functions that are configured via the UI, like package manipulation, powershell version setting, and deployment scripts (currently grouped under "Features" in our UI)
@@ -37,7 +37,7 @@ Upload Package X contents to Azure Blob Storage
 
 There are a few ways we might model this.
 
-We could take a delcarative approach, where `Acquire Package` and `Substitute Variables` are declared in the Step Package `manifest.json`. It is left to Server and other framework components to show the right UI to enable these, and ensure they are enacted at execution time.
+We could take a declarative approach, where `Acquire Package` and `Substitute Variables` are declared in the Step Package `manifest.json`. It is left to Server and other framework components to show the right UI to enable these, and ensure they are enacted at execution time.
 
 Another option would be to coordinate this functionality within the step handler code. The Step Executor would be supplied some sort of function it could call to acquire the package and substitute variables:
 

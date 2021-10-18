@@ -1,4 +1,4 @@
-# Step Pacakge CLI
+# Step Package CLI
 
 ## Overview
 
@@ -8,4 +8,4 @@ By centralizing the detail of how Step Packages are built into a single tool, we
 
 ## Detail
 
-For further information, please review the [Step Package CLI Readme](https://github.com/octopusdeploy/step-package-cli)
+For further information, please review the [Step Package CLI Readme](https://github.com/OctopusDeploy/step-api/blob/main/packages/cli/README.md)
