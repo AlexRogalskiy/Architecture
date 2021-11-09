@@ -41,7 +41,7 @@ To solve this, we take a snapshot of the document at the time it was first impor
     3. Storing the document in OCL
     4. (If necessary) Snapshot the original document and delete it from it's table in the database
 - If the version of an `Import` step is less than or equal to the `Project Version`, then the import step will source it's document from the stash. Otherwise, it sources it's document from the databse and takes a snapshot.
-- These steps are special, as they bring the document into git **in it's current, most up-to-date shape**, meaning any other migration steps for said document which would run after the `Import` step are made redundant.
+- `Import` steps are special, as they bring the document into git **in it's current, most up-to-date shape**, meaning any other migration steps for said document which would run after the `Import` step are made redundant.
 
 ## `Modify`
 - `Modify` steps are fairly straightforward. Given a file name, they:
@@ -58,7 +58,7 @@ To solve this, we take a snapshot of the document at the time it was first impor
 - As the name suggests, the `Remove` steps simply removes the document from git.
 - Similarly to the `Rename` step, it's important to check over any prior migration steps that may have relied on the file that's being removed. It's also possible that previous steps relating to the document will need to be updated to a no-op.
 - If a document is to be imported and removed in the same migration session, then all steps relating to that document are skipped.
-- **Moving data from git to the database is not supported!**
+- Moving data from git to the database is not supported, and this step does not facilitate this behaviour.
 
 # Migration Scenarios
 
@@ -78,12 +78,12 @@ Another common scenario is a simple series of modify steps.
 ## Uncommon
 
 ### Importing a document after the schema has been initialized
-If the schema is already initialized, and a new document has been since added to version-control, the import step will execute, but any further steps related to that document will be skipped.
+If the schema is already initialized, and a new document has been since added to git, the import step will execute, but any further steps related to that document will be skipped.
 In this case, `Add Bar to Channels` is skipped, because the `Import Channels` step will already import the channels in their most up-to-date shape.
 ![Import after init](./Import_after_init.png)
 
 ### Removing a document from the schema
-In the rare case that we need to remove a document from version-control, the remove step allows us to delete the document from git.
+In the rare case that we need to remove a document from git, the remove step allows us to delete the document from git.
 ![Remove](./Remove.png)
 
 ### Importing and removing the same document in the same migration session
@@ -97,6 +97,8 @@ This ensures that the migration steps defined in Octopus Server bring the git re
 
 This diagram should help illustrate how the tests work. Each row can be considered a test case.
 ![Tests](./Tests.png)
+
+For this to work, a new snapshot must be created every time a new migration step is added.
 
 # Best Practices
 
