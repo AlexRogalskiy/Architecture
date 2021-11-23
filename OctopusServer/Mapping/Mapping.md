@@ -7,7 +7,7 @@ Mapping in Octopus Server is achieved via two key interfaces: `IMapToNew<TSource
 
 Both of these interfaces are intentionally async-only.
 
-When creating a mapper, please name it `Map<SourceType>To<TargetType>`, e.g. `MapFromFooToFooResource` or `MapFromCreateDeploymentCommandV1ToCreateDeploymentCommandV2`. Some mappers will implement both `IMapToNew<,>` and `IMapToExisting<,>` and this is generally fine.
+When creating a mapper, please name it `MapFrom<SourceType>To<TargetType>`, e.g. `MapFromFooToFooResource` or `MapFromCreateDeploymentCommandV1ToCreateDeploymentCommandV2`. Some mappers will implement both `IMapToNew<,>` and `IMapToExisting<,>` and this is generally fine.
 
 Please be cautious about mapping between more than a single `TSource, TTarget` pairing in the same mapper.
 
