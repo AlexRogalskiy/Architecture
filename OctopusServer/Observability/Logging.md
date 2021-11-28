@@ -7,11 +7,12 @@ To get started, inject an `ILogger` via dependency injection. Be careful to inje
 ```csharp
 using Serilog;
 
-class MyClass {
-
+class MyClass
+{
     readonly ILogger logger;
 
-    public MyClass(ILogger logger) {
+    public MyClass(ILogger logger)
+    {
         this.logger = logger;
     }
 }
