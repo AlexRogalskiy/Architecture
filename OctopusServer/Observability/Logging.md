@@ -18,7 +18,15 @@ class MyClass
 }
 ```
 
-Accessing the logger instance directly via `Serilog.Log.Logger` is highly discouraged and should only be used in extenuating circumstances. 
+Accessing the logger instance directly via `Serilog.Log.Logger` is highly discouraged and should only be used in extenuating circumstances. If you do need to use the static logger directly, please do something like this:
+
+```csharp
+public class SomeTrickyService
+{
+    readonly ILogger logger = Log.Logger.ForContext<SomeTrickyService>();
+}
+```
+
 
 
 ## Structured Logging Style Guide
