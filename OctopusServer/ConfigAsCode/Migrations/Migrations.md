@@ -113,10 +113,12 @@ On it's own, removing documents from git isn't a big deal. However, if we ever n
 - If the document was deleted from the database, then nothing will be imported
 
 We address this by skipping all steps related to a particular document if that document is going to be imported and removed.
+
 ![Import and remove](./Import_and_remove.png)
 
 This is only necessary if we need to import and remove the same document in one "session" (a set of migrations, E.g: v3 👉 v5)
 If we don't need to import anything, then the migration flow is pretty straightforward.
+
 ![Straightforward remove](./Straightforward_remove.png)
 
 ## Example migration scenarios
@@ -128,10 +130,12 @@ If we don't need to import anything, then the migration flow is pretty straightf
 
 #### Importing everything from scratch
 When importing everything from scratch (E.g: when converting a project to version-controlled), all import steps are executed, and all other steps are ignored.
+
 ![Import from scratch](./Import_from_scratch.png)
 
 #### A series of Modify steps
 Another common scenario is a simple series of modify steps.
+
 ![Series of modified](./Series_of_modifies.png)
 
 ### Uncommon
@@ -139,14 +143,17 @@ Another common scenario is a simple series of modify steps.
 #### Importing a document after the schema has been initialized
 If the schema is already initialized, and a new document has been since added to git, the import step will execute, but any further steps related to that document will be skipped.
 In this case, `Add Buzz to Fizz` is skipped, because the `Import Fizz` step will already import the `Fizz` in it's most up-to-date shape.
+
 ![Import after init](./Import_after_init.png)
 
 #### Removing a document from the schema
 In the rare case that we need to remove a document from git, the remove step allows us to delete the document from git.
+
 ![Remove](./Remove.png)
 
 #### Importing and removing the same document in the same migration session
 It's also possible that a document will be imported and removed in the same session. In this case, all steps relating to that document are skipped.
+
 ![Import and remove](./Import_and_remove.png)
 
 ## Testing
@@ -154,6 +161,7 @@ Because git migrations aren't as straightforward database migrations, it's impor
 As part of our test suite, we have an integration test set up to initialize a project at version `N`, then run migrations from version `N` to the latest, where `N` is any version number from `1` to `latest - 1`. This ensures that the migration steps defined in Octopus Server bring the git repository into a known state, regardless of the starting version.
 
 This diagram should help illustrate how the tests work. Each row can be considered a test case.
+
 ![Tests](./Tests.png)
 
 For this to work, a new snapshot must be created every time a new migration step is added.
