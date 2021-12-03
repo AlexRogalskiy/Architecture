@@ -101,7 +101,7 @@ To solve this, we snapshot the document before deleting it, so that any future e
 ![Deleting data when importing: Solution](./Deleting_data_when_importing_solution.png)
 
 
-The Import step compares the `Project Version` and it's own version to determine whether to fetch the document from the documents own table, or from the snapshots table.
+The Import step compares the `Project Version` and it's own version to determine whether to fetch the document from the documents own table, or use a snapshot.
 
 ![Snapshot selection](./Snapshot_selection.png)
 
