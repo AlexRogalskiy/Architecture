@@ -100,6 +100,10 @@ To solve this, we snapshot the document before deleting it, so that any future e
 
 ![Deleting data when importing: Solution](./Deleting_data_when_importing_solution.png)
 
+When we imported snapshotted OCL, we end up with OCL at whatever the `Server Version` was at the time it was imported.
+Because of this, we need to run any remaining steps to bring snapshots up-to-date.
+
+![Out of date snapshots](./Out_of_date_snapshots.png)
 
 The Import step compares the `Project Version` and it's own version to determine whether to fetch the document from the documents own table, or use a snapshot.
 
