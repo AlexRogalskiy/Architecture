@@ -6,9 +6,11 @@ For this, we have a range of different types of feature flags and toggles that c
 ## Octopus Server Portal > Configuration > Settings
 Configuration Settings are collections of values that control a set of behaviour. They allow Customers to control and configure things like Authentication mechanism (eg Octopus SSO using AAD, which requires a number of different identifiers, secrets and URLs to get working)
 
-Each of these settings is declared by creating a new class that derives from [ConfigurationSettings<,,>](https://github.com/OctopusDeploy/ServerExtensibility/blob/8f7387ccf824972af3ac6bde8568f379bb8987c7/source/Server.Extensibility/Extensions/Infrastructure/Configuration/ConfigurationSettings.cs).
+Each of these settings is declared by creating a new class that derives from [ConfigurationSettings<,,>](https://github.com/OctopusDeploy/ServerExtensibility/blob/8f7387ccf824972af3ac6bde8568f379bb8987c7/source/Server.Extensibility/Extensions/Infrastructure/Configuration/ConfigurationSettings.cs) or [`ExtensionConfigurationSettings<,,>`](https://github.com/OctopusDeploy/ServerExtensibility/blob/750c692240649f885359c12419a116da7ea4c9f7/source/Server.Extensibility/Extensions/Infrastructure/Configuration/ExtensionConfigurationSettings.cs)
 
-Configuration Settings are persisted to the `Configuration` table.
+Configuration Settings are persisted to one of:
+* The `Configuration` table 
+* The `ExtensionConfiguration` table
 
 ### Hidden Settings
 Some configuration entries are decorated with an `IHiddenConfigurationSettings` attribute, which prevents them from showing up in the menu of available Configuration settings. However, you can still navigate to them if you know the `Id` of the Configuration item. Just click into a visible Setting, and replace the final slug of the URL with the `Id` of your hidden configuration item.
