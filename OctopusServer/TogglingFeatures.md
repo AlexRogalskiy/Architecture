@@ -9,7 +9,7 @@ Configuration Settings are collections of values that control a set of behaviour
 Each of these settings is declared by creating a new class that derives from [ConfigurationSettings<,,>](https://github.com/OctopusDeploy/ServerExtensibility/blob/8f7387ccf824972af3ac6bde8568f379bb8987c7/source/Server.Extensibility/Extensions/Infrastructure/Configuration/ConfigurationSettings.cs) or [`ExtensionConfigurationSettings<,,>`](https://github.com/OctopusDeploy/ServerExtensibility/blob/750c692240649f885359c12419a116da7ea4c9f7/source/Server.Extensibility/Extensions/Infrastructure/Configuration/ExtensionConfigurationSettings.cs)
 
 Configuration Settings are persisted to one of:
-* The `Configuration` table 
+* The `Configuration` table
 * The `ExtensionConfiguration` table
 
 ### Hidden Settings
@@ -85,6 +85,7 @@ Do not use these if:
 * Your toggle will be long-lived or permanent
 * You want Customers to be able to see/control feature availability
 * Your toggle requires additional related settings (eg a modifiable endpoint, threshold values etc) to function
+* Your toggle needs a consistent value across all nodes in a HA cluster
 
 ### Example implementation
 https://github.com/OctopusDeploy/OctopusDeploy/pull/10702
