@@ -47,7 +47,10 @@ Features in the Experimental section are only visible when one of the following 
 * The [Konami code](https://en.wikipedia.org/wiki/Konami_Code) has been activated
 * The feature is set to Enabled (eg through a DB script)
 
-Type the Konami code while on the Features page to show any hidden Experimental Features for the duration of your session.
+Type the following key sequence while on the Features page to show any hidden Experimental Features for the duration of your session.
+```
+⬆️ ⬆️ ⬇️ ⬇️ ⬅️ ➡️ ⬅️ ➡️
+```
 
 ### How to decide?
 Use these if:
