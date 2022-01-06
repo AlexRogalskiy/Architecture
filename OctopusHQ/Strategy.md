@@ -72,7 +72,6 @@ Every event should have the following structure
 {
     "id" : "SubscriptionCreated-licensekey-8a52c8af-2408-486f-ba4a-d277079de2b0",
     "source": "Octofront",
-    "path": "Subscription Created | Hosted Instance Created",
     "type": "SubscriptionCreatedV1",
     "occurredTimeUtc": "2021-11-08T12:33:00Z",
     "activityId": "00-15c3886877ecbd4a95b8b031cd7fbb46-c5fe780fb33bb443-00",
@@ -83,7 +82,12 @@ Every event should have the following structure
 
 | Name        | Type        | Description | Implementation |
 | ----------- | ----------- | ----------- | ----------- |
-| id          | string      | the unique indentifier | test |
-| source   | string        | the unique indentifier | test |
-
+| id          | string      | The unique indentifier | This property can be used to take advantage of [the message deduplication feature offered by Azure Service Bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/duplicate-detection). At the minimum the identifier needs to be unique within the topic it is used.
+ |
+| source   | string        | The name of the source system | |
+| type   | string        | The type of the event | |
+| occurredTimeUtc   | string        | An ISO 8601 formatted string representing the data and time of when the event occured  | |
+| activityId   | string        | An identifier that identifies the overall activity in traces | |
+| specVersion   | string        | The version of the Octopus Events spec this message adheres to | |
+| payload   | json        | The payload of the event itself, with all it’s relevant data | |
 
